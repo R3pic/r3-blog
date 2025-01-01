@@ -1,0 +1,33 @@
+{
+  "name": "r3-blog",
+  "module": "src/index.ts",
+  "type": "module",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "scripts": {
+    "lint": "eslint",
+    "cli": "./src/bin/blog.ts",
+    "test": "test",
+    "build": "echo running \build"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^13.0.0",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@stylistic/eslint-plugin": "^2.12.1",
+    "@types/bun": "latest",
+    "eslint": "^9.17.0",
+    "fast-glob": "^3.3.2",
+    "globals": "^15.14.0",
+    "typescript-eslint": "^8.19.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "bin": {
+    "blog": "./src/bin/blog.ts"
+  }
+}
