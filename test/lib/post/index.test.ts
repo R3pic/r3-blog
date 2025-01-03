@@ -1,14 +1,20 @@
 import BlogConfig from '@/config';
-import { getAllPost, getPost } from '@/lib/post';
+import { PostService } from '@/lib/post';
 import { PostNotFoundError } from '@/lib/post/error';
-import { describe, it, expect, beforeAll } from 'bun:test';
+import {
+    describe, it, expect, beforeAll, beforeEach 
+} from 'bun:test';
 
 describe('Post', () => {
+    let postService: PostService;
     beforeAll(() => {
         BlogConfig.postDir = 'fixtures/_posts';
     });
-
+    
     describe('getAllPost', () => {
+        beforeEach(() => {
+            postService = new PostService();
+        });
         it('올바른 동작을 수행한다.', () => {
             const expected: Post[] = [
                 {
@@ -43,10 +49,17 @@ describe('Post', () => {
                 }
             ];
 
-            const actual = getAllPost();
+            const actual = postService.getAllPost();
 
             expect(actual).toBeArray();
             expect(actual).toEqual(expected);
+        });
+
+        it('캐시가 존재할 경우 반환한다.', () => {
+            const firstCallResult = postService.getAllPost();
+            const secondCallResult = postService.getAllPost();
+        
+            expect(secondCallResult).toBe(firstCallResult);
         });
     });
 
@@ -63,7 +76,7 @@ describe('Post', () => {
                 slug: 'test-post'
             };
 
-            const actual = getPost('test-post');
+            const actual = postService.getPost('test-post');
 
             expect(actual).toBeDefined();
             expect(actual).toEqual(expected);
@@ -72,8 +85,8 @@ describe('Post', () => {
         it('존재하지 않는 게시글을 조회하면 예외를 발생시킨다.', () => {
             const expectedErrMsg = `게시글이 존재하지 않습니다. "not-found"가 ${BlogConfig.postDir}에 존재하나요?`;
 
-            expect(() => getPost('not-found')).toThrowError(PostNotFoundError);
-            expect(() => getPost('not-found')).toThrowError(expectedErrMsg);
+            expect(() => postService.getPost('not-found')).toThrowError(PostNotFoundError);
+            expect(() => postService.getPost('not-found')).toThrowError(expectedErrMsg);
         });
     });
 });

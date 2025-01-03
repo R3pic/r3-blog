@@ -5,7 +5,4 @@ export {
     getCategoryChain
 } from '@/lib/category';
 
-export {
-    getAllPost,
-    getPost
-} from '@/lib/post';
+export { PostService } from '@/lib/post';

@@ -4,24 +4,38 @@ import matter from 'gray-matter';
 import { globSync } from 'fast-glob';
 import { parsePostFrontMatter } from './parsePostMatter';
 import { PostNotFoundError } from './error';
+import { TagService } from '@/lib/tag';
 import BlogConfig from '@/config';
 
+export class PostService {
+    private allPost: Post[] = [];
+    private cached = false;
+    getAllPost(postDir: string = BlogConfig.postDir): Post[] {
+        if (this.cached)
+            return this.allPost;
 
-export function getAllPost(postDir: string = BlogConfig.postDir): Post[] {
-    const cwd = path.resolve(postDir);
-    return globSync('**/*.mdx', { onlyFiles: true, cwd })
-        .map((postPath) => parsePost(postPath))
-        .sort((a, b) => +b.date - +a.date);
-}
+        const cwd = path.resolve(postDir);
+        this.allPost = globSync('**/*.mdx', { onlyFiles: true, cwd })
+            .map((postPath) => parsePost(postPath))
+            .sort((a, b) => b.date.getTime() - a.date.getTime());
+        this.cached = true;
+        return this.allPost;
+    }
 
-export function getPost(slug: string, postDir: string = BlogConfig.postDir): Post {
-    const cwd = path.resolve(postDir);
-    const [postPath] = globSync(`**/${slug}.mdx`, { onlyFiles: true, cwd });
+    getAllPostFromTag(tag: string, postDir?: string) {
+        const tagService = new TagService(this.getAllPost(postDir));
+        return tagService.getAllPostFromTag(tag);
+    }
 
-    if (postPath == undefined)
-        throw new PostNotFoundError(slug);
-
-    return parsePost(postPath);
+    getPost(slug: string, postDir: string = BlogConfig.postDir): Post {
+        const cwd = path.resolve(postDir);
+        const [postPath] = globSync(`**/${slug}.mdx`, { onlyFiles: true, cwd });
+    
+        if (postPath == undefined)
+            throw new PostNotFoundError(slug);
+    
+        return parsePost(postPath);
+    }
 }
 
 function parsePost(postPath: string): Post {
