@@ -2,19 +2,20 @@ import {
     describe, it, expect, beforeAll, beforeEach 
 } from 'bun:test';
 import { CategoryService } from '@/lib/category';
-import BlogConfig from '@/config';
 import { getAllRootCategoryExpected, toCategoryNodeExpected } from './testData';
 import { CategoryNotFoundError, PostCacheNotInitializedError } from '@/lib/category/error';
-import { PostService } from '@/index';
+import { PostService } from '@/lib/post';
+import { Category, CategoryNode, Post } from '@/types';
 
 describe('Category', () => {
+    let postDir: string;
     beforeAll(() => {
-        BlogConfig.postDir = 'fixtures/_posts';
+        postDir = 'fixtures/_posts';
     });
 
     let categoryService: CategoryService;
     beforeEach(() => {
-        categoryService = new CategoryService();
+        categoryService = new CategoryService(postDir);
     });
 
     describe('getAllCategoryPaths', () => {
@@ -163,9 +164,8 @@ describe('Category', () => {
                     title: '테스트포스트3'
                 }
             ];
-            const postService = new PostService();
-            const categoryService = new CategoryService(postService.getAllPost());
-            const actual = categoryService.getAllPost('category3');
+            const postService = new PostService(postDir);
+            const actual = categoryService.injection(postService).getAllPost('category3');
 
             expect(actual).toEqual(expected);
         });

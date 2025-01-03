@@ -1,4 +1,4 @@
-import { CategoryFrontMatter, PostFrontMatter } from '../types';
+import { CategoryFrontMatter, PostFrontMatter, TemplateContext } from '../types';
 
 class MarkdownTemplate {
     private static frontmatter<T>(ctx: TemplateContext<T>) {

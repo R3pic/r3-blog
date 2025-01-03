@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'bun:test';
 import { parseCategoryMatter } from '@/lib/category/parseCategoryMatter';
 import { InvaildCategoryFrontMatterError } from '@/lib/category/error';
+import { CategoryFrontMatter } from '@/types';
 
 describe('parseCategoryMatter 테스트', () => {
     it('올바른 Category index 소스를 파싱한다.', () => {

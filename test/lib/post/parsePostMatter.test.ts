@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'bun:test';
 import { InvaildPostFrontMatterError } from '@/lib/post/error';
 import { parsePostFrontMatter } from '@/lib/post/parsePostMatter';
+import { PostFrontMatter } from '@/types';
 
 describe('parsePostFrontMatter 테스트', () => {
     type TestParamater = Parameters<typeof parsePostFrontMatter>[0];

@@ -1,5 +1,3 @@
-import BlogConfig from '@/config';
-
 export class PostError extends Error {
     constructor(message: string) {
         super(message);
@@ -13,7 +11,7 @@ export class InvaildPostFrontMatterError extends PostError {
 }
 
 export class PostNotFoundError extends PostError {
-    constructor(slug: string) {
-        super(`게시글이 존재하지 않습니다. "${slug}"가 ${BlogConfig.postDir}에 존재하나요?`);
+    constructor(slug: string, postDir: string) {
+        super(`게시글이 존재하지 않습니다. "${slug}"가 ${postDir}에 존재하나요?`);
     }
 }

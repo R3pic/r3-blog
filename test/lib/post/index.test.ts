@@ -1,19 +1,20 @@
-import BlogConfig from '@/config';
 import { PostService } from '@/lib/post';
 import { PostNotFoundError } from '@/lib/post/error';
+import { Post } from '@/types';
 import {
     describe, it, expect, beforeAll, beforeEach 
 } from 'bun:test';
 
 describe('Post', () => {
     let postService: PostService;
+    let postDir: string;
     beforeAll(() => {
-        BlogConfig.postDir = 'fixtures/_posts';
+        postDir = 'fixtures/_posts';
     });
     
     describe('getAllPost', () => {
         beforeEach(() => {
-            postService = new PostService();
+            postService = new PostService(postDir);
         });
         it('올바른 동작을 수행한다.', () => {
             const expected: Post[] = [
@@ -107,7 +108,7 @@ describe('Post', () => {
         });
 
         it('존재하지 않는 게시글을 조회하면 예외를 발생시킨다.', () => {
-            const expectedErrMsg = `게시글이 존재하지 않습니다. "not-found"가 ${BlogConfig.postDir}에 존재하나요?`;
+            const expectedErrMsg = `게시글이 존재하지 않습니다. "not-found"가 ${postDir}에 존재하나요?`;
 
             expect(() => postService.getPost('not-found')).toThrowError(PostNotFoundError);
             expect(() => postService.getPost('not-found')).toThrowError(expectedErrMsg);

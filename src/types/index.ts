@@ -1,7 +1,5 @@
-export type BlogConfig = {
-    title: string;
-    url: string;
-    postDir: string;
+export type TemplateContext<T> = {
+    [K in keyof T]: undefined extends T[K] ? string | undefined : string;
 };
 
 export type Category = {

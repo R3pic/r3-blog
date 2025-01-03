@@ -5,6 +5,13 @@ import { AbstractAction } from '../AbstractAction';
 import { show } from '@/cli/ui';
 import MarkdownTemplate from '@/templates';
 import { convertToSlug, formatDateString } from '@/utils/string';
+import { PostFrontMatter, TemplateContext } from '@/types';
+
+type PostActionContext = {
+    postName: string;
+    categoryPath: string;
+    options: Partial<TemplateContext<PostFrontMatter>>;
+};
 
 export class PostNewAction extends AbstractAction<PostActionContext> {
     handle(ctx: PostActionContext): never {

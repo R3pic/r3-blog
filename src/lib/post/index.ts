@@ -5,48 +5,49 @@ import { globSync } from 'fast-glob';
 import { parsePostFrontMatter } from './parsePostMatter';
 import { PostNotFoundError } from './error';
 import { TagService } from '@/lib/tag';
-import BlogConfig from '@/config';
 import { CategoryService } from '../category';
 import { Post } from '@/types';
+import { BlogService } from '../blogService';
 
-export class PostService {
+export class PostService extends BlogService {
     private allPost: Post[] = [];
     private cached = false;
-    getAllPost(postDir: string = BlogConfig.postDir): Post[] {
+
+    getAllPost(): Post[] {
         if (this.cached)
             return this.allPost;
 
-        const cwd = path.resolve(postDir);
+        const cwd = path.resolve(this.postDir);
         this.allPost = globSync('**/*.mdx', { onlyFiles: true, cwd })
-            .map((postPath) => parsePost(postPath))
+            .map((postPath) => parsePost(postPath, this.postDir))
             .sort((a, b) => b.date.getTime() - a.date.getTime());
         this.cached = true;
         return this.allPost;
     }
 
-    getAllPostFromCategory(categoryPath: string, postDir?: string) {
-        const categoryService = new CategoryService(this.getAllPost(postDir));
+    getAllPostFromCategory(categoryPath: string) {
+        const categoryService = new CategoryService(this.postDir).injection(this);
         return categoryService.getAllPost(categoryPath);
     }
 
-    getAllPostFromTag(tag: string, postDir?: string) {
-        const tagService = new TagService(this.getAllPost(postDir));
+    getAllPostFromTag(tag: string) {
+        const tagService = new TagService(this.getAllPost());
         return tagService.getAllPost(tag);
     }
 
-    getPost(slug: string, postDir: string = BlogConfig.postDir): Post {
-        const cwd = path.resolve(postDir);
+    getPost(slug: string): Post {
+        const cwd = path.resolve(this.postDir);
         const [postPath] = globSync(`**/${slug}.mdx`, { onlyFiles: true, cwd });
     
         if (postPath == undefined)
-            throw new PostNotFoundError(slug);
+            throw new PostNotFoundError(slug, this.postDir);
     
-        return parsePost(postPath);
+        return parsePost(postPath, this.postDir);
     }
 }
 
-function parsePost(postPath: string): Post {
-    const postAbsolutePath = path.resolve(BlogConfig.postDir, postPath);
+function parsePost(postPath: string, postDir: string): Post {
+    const postAbsolutePath = path.resolve(postDir, postPath);
 
     const source = fs.readFileSync(postAbsolutePath, 'utf-8');
     const { data, content } = matter(source);

@@ -4,34 +4,16 @@ import { globSync } from 'fast-glob';
 import { parseCategoryMatter } from './parseCategoryMatter';
 import { CategoryNotFoundError, PostCacheNotInitializedError } from './error';
 import { MapArrayCache } from '@/lib/common/cache';
-import BlogConfig from '@/config';
 import { Category, CategoryNode, Post } from '@/types';
+import { PostService } from '../post';
+import { BlogService } from '../blogService';
 
-export class CategoryService {
+export class CategoryService extends BlogService {
     private categoryPostCache = new MapArrayCache<string, Post[]>();
     private cached = false;
-    constructor(posts?: Post[]) {
-        if (posts) {
-            this.initializeCache(posts);
-        }
-    }
-
-    private initializeCache(posts: Post[]) {
-        for (let i = 0, len = posts.length ; i < len ; i++) {
-            const post = posts[i];
-            const splited = post.category.split('/');
-
-            let basePath = '';
-            splited.forEach((slug) => {
-                basePath = basePath ? `${basePath}/${slug}` : slug;
-                this.categoryPostCache.add(basePath, post);
-            });
-        }
-        this.cached = true;
-    }
 
     getAllCategoryPath(): string[] {
-        const cwd = path.resolve(BlogConfig.postDir);
+        const cwd = path.resolve(this.postDir);
         return globSync(['**/_index.md'], { onlyFiles: true, cwd }).map((indexPath) => path.dirname(indexPath)).sort();
     }
 
@@ -61,7 +43,7 @@ export class CategoryService {
     }
 
     getCategory(categoryPath: string): Category {
-        const categoryIndexPath = path.resolve(BlogConfig.postDir, categoryPath, '_index.md');
+        const categoryIndexPath = path.resolve(this.postDir, categoryPath, '_index.md');
         if (!fs.existsSync(categoryIndexPath))
             throw new CategoryNotFoundError(categoryIndexPath);
         
@@ -79,7 +61,7 @@ export class CategoryService {
     }
 
     toCategoryNode(category: Category): CategoryNode {
-        const cwd = path.resolve(BlogConfig.postDir, category.path);
+        const cwd = path.resolve(this.postDir, category.path);
         const subCategoryIndexPaths = globSync(['*/_index.md'], { onlyFiles: true, cwd });
     
         const subCategories = subCategoryIndexPaths
@@ -93,6 +75,23 @@ export class CategoryService {
             ...category,
             subCategories
         };
+    }
+
+    injection(service: PostService) {
+        const posts = service.getAllPost();
+        for (let i = 0, len = posts.length ; i < len ; i++) {
+            const post = posts[i];
+            const splited = post.category.split('/');
+
+            let basePath = '';
+            splited.forEach((slug) => {
+                basePath = basePath ? `${basePath}/${slug}` : slug;
+                this.categoryPostCache.add(basePath, post);
+            });
+        }
+        this.cached = true;
+
+        return this;
     }
 
     getAllPost(categoryPath: string) {

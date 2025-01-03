@@ -1,14 +1,15 @@
-import BlogConfig from '@/config';
-import { PostService } from '@/index';
+import { PostService } from '@/lib/post';
 import { TagService } from '@/lib/tag';
+import { Post } from '@/types';
 import { describe, it, expect, beforeAll } from 'bun:test';
 
 describe('Tag', () => {
     describe('TagService', () => {
         let tagService: TagService;
+        let postDir: string;
         beforeAll(() => {
-            BlogConfig.postDir = 'fixtures/_posts';
-            const postService = new PostService();
+            postDir = 'fixtures/_posts';
+            const postService = new PostService(postDir);
             tagService = new TagService(postService.getAllPost());
         });
 

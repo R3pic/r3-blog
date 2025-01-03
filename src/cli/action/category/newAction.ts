@@ -6,10 +6,16 @@ import { show } from '@/cli/ui';
 import MarkdownTemplate from '@/templates';
 import { convertToDisplay, convertToSlug } from '@/utils/string';
 
+type CategoryActionContext = {
+    categoryPath: string;
+    display?: string;
+    order?: string;
+};
+
 export class CategoryNewAction extends AbstractAction<CategoryActionContext> {
     handle(ctx: CategoryActionContext): never {
         const { display, order } = ctx;
-        const splited = ctx.categoryPath.split('/').map((v) => convertToSlug(v));
+        const splited = ctx.categoryPath.split('/').map((v: string) => convertToSlug(v));
         const categoryPath = splited.join('/');
         const postDir = getPostDir();
         const newCategoryPath = path.join(postDir, categoryPath);
