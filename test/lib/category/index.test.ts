@@ -5,7 +5,7 @@ import { CategoryService } from '@/lib/category';
 import { getAllRootCategoryExpected, toCategoryNodeExpected } from './testData';
 import { CategoryNotFoundError, PostCacheNotInitializedError } from '@/lib/category/error';
 import { PostService } from '@/lib/post';
-import { Category, CategoryNode, Post } from '@/types';
+import { Category, CategoryNode, DetailPost } from '@/types';
 
 describe('Category', () => {
     let postDir: string;
@@ -148,20 +148,26 @@ describe('Category', () => {
 
     describe('getAllPost', () => {
         it('올바른 동작을 수행한다.', () => {
-            const expected: Post[] = [
+            const expected: DetailPost[] = [
                 {
-                    category: 'category3',
-                    content: '테스트게시글 내용3',
-                    date: new Date('2025-01-01'),
-                    description: '테스트포스트설명3',
                     slug: 'test-post-3',
+                    title: '테스트포스트3',
+                    description: '테스트포스트설명3',
+                    content: '테스트게시글 내용3',
+                    category: {
+                        display: 'category3',
+                        level: 1,
+                        order: 0,
+                        path: 'category3',
+                        slug: 'category3'
+                    },
+                    date: new Date('2025-01-01'),
+                    thumbnail: '/thumbnail/nextjs.png',
                     tags: [
                         '태그3',
                         '2024',
                         '2024-12-30'
-                    ],
-                    thumbnail: '/thumbnail/nextjs.png',
-                    title: '테스트포스트3'
+                    ]
                 }
             ];
             const postService = new PostService(postDir);

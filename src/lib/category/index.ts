@@ -4,7 +4,7 @@ import { globSync } from 'fast-glob';
 import { parseCategoryMatter } from './parseCategoryMatter';
 import { CategoryNotFoundError, PostCacheNotInitializedError } from './error';
 import { MapArrayCache } from '@/lib/common/cache';
-import { Category, CategoryNode, Post } from '@/types';
+import { Category, CategoryNode, DetailPost, Post } from '@/types';
 import { PostService } from '../post';
 import { BlogService } from '../blogService';
 
@@ -94,10 +94,16 @@ export class CategoryService extends BlogService {
         return this;
     }
 
-    getAllPost(categoryPath: string) {
+    getAllPost(categoryPath: string): DetailPost[] {
         if (!this.cached)
             throw new PostCacheNotInitializedError();
 
-        return this.categoryPostCache.get(categoryPath) || [];
+        return this.categoryPostCache.get(categoryPath)?.map((post) => {
+            const category = this.getCategory(categoryPath);
+            return {
+                ...post,
+                category
+            };
+        }) || [];
     }
 }

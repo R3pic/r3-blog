@@ -1,22 +1,24 @@
-import type { BuildConfig } from 'bun';
-import dts from 'bun-plugin-dts';
+import { build } from 'tsup';
 
-const defaultBuildConfig: BuildConfig = {
-    entrypoints: ['./src/index.ts', './src/bin/blog.ts'],
-    outdir: './dist',
-    target: 'bun'
-};
+async function runBuild() {
+    try {
+        await build({
+            entry: ['src/index.ts'],
+            format: ['cjs', 'esm'],
+            dts: true,
+            clean: true
+        });
+        await build({
+            entry: ['src/bin/blog.ts'],
+            outDir: './dist/bin/',
+            format: ['esm'],
+            target: 'esnext',
+            platform: 'node'
+        });
+        console.log('Build completed successfully.');
+    } catch (error) {
+        console.error('Build failed:', error);
+    }
+}
 
-await Promise.all([
-    Bun.build({
-        ...defaultBuildConfig,
-        plugins: [dts()],
-        format: 'esm',
-        naming: '[dir]/[name].js'
-    }),
-    Bun.build({
-        ...defaultBuildConfig,
-        format: 'cjs',
-        naming: '[dir]/[name].cjs'
-    })
-]);
+await runBuild();

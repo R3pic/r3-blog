@@ -30,6 +30,10 @@ export type Post = {
     tags: string[];
 };
 
+export type DetailPost = Omit<Post, 'category'> & {
+    category: Category;
+};
+
 export type PostFrontMatter = {
     title: string;
     description: string;
