@@ -4,7 +4,7 @@
   "engines": {
     "bun": ">=1.0.0"
   },
-  "version": "0.0.5",
+  "version": "0.0.52",
   "main": "./src/index.ts",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,7 +22,7 @@
     "cli": "bun run ./dist/bin/blog.js",
     "test": "test",
     "build": "bun run build.ts",
-    "publish": "bun run build.ts && bun lint && bun publish"
+    "prepublish": "bun lint && bun run build.ts "
   },
   "files": [
     "dist"
