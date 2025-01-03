@@ -1,4 +1,5 @@
 import { MapArrayCache } from '@/lib/common/cache';
+import { Post } from '@/types';
 
 export class TagService {
     tags = new Set<string>();

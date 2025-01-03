@@ -5,6 +5,7 @@ import { parseCategoryMatter } from './parseCategoryMatter';
 import { CategoryNotFoundError, PostCacheNotInitializedError } from './error';
 import { MapArrayCache } from '@/lib/common/cache';
 import BlogConfig from '@/config';
+import { Category, CategoryNode, Post } from '@/types';
 
 export class CategoryService {
     private categoryPostCache = new MapArrayCache<string, Post[]>();

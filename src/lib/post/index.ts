@@ -7,6 +7,7 @@ import { PostNotFoundError } from './error';
 import { TagService } from '@/lib/tag';
 import BlogConfig from '@/config';
 import { CategoryService } from '../category';
+import { Post } from '@/types';
 
 export class PostService {
     private allPost: Post[] = [];

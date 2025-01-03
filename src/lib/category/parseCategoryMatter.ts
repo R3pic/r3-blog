@@ -1,5 +1,6 @@
 import matter from 'gray-matter';
 import { InvaildCategoryFrontMatterError } from './error';
+import { CategoryFrontMatter } from '@/types';
 
 /**
  * ```js

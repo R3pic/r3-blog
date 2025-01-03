@@ -27,7 +27,6 @@ export class CategoryNewAction extends AbstractAction<CategoryActionContext> {
             let currentPath = '';
             for(let i = 0, len = splited.length ; i < len ; i++) {
                 currentPath = currentPath ? `${currentPath}/${splited[i]}` : splited[0];
-                console.log(currentPath);
                 const currentCategoryPath = path.join(postDir, currentPath);
 
                 const _display = convertToDisplay(path.basename(currentPath));

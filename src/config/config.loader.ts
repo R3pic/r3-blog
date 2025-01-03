@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import defaultBlogConfig from './default.blog.config';
 import { InvaildConfigError } from './error';
+import { BlogConfig } from '@/types';
 
 const CONFIG_FILE = 'blog.config.ts';
 
@@ -18,8 +19,8 @@ async function loadConfig(): Promise<BlogConfig> {
 
     if (fs.existsSync(configPath)) {
         try {
-            const { default: userConfig } = await import(configPath);
-
+            const userConfigModule = await import(configPath);
+            const userConfig = userConfigModule.default || userConfigModule;
             if (!validateBlogConfig(userConfig))
                 throw new InvaildConfigError('required field');
 
@@ -46,6 +47,6 @@ async function loadConfig(): Promise<BlogConfig> {
     return defaultBlogConfig;
 }
 
-const BlogConfig = await loadConfig();
+const blogConfig = await loadConfig();
 
-export default BlogConfig;
+export default blogConfig;

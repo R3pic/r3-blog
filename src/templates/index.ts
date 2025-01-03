@@ -1,3 +1,5 @@
+import { CategoryFrontMatter, PostFrontMatter } from '../types';
+
 class MarkdownTemplate {
     private static frontmatter<T>(ctx: TemplateContext<T>) {
         let buffer = '---\n';

@@ -1,3 +1,4 @@
+import { PostFrontMatter } from '../../types';
 import { InvaildPostFrontMatterError } from './error';
 
 /**
