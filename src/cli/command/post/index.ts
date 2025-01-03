@@ -6,8 +6,8 @@ export class PostCommand extends AbstractCommand {
         super('post');
         new PostNewCommand().register(this);
         this.alias('p')
-            .description('블로그 게시글 관련 명령어들')
-            .summary('Post')
+            .description('게시글 관련 명령어')
+            .summary('게시글 관련 명령어')
             .action(() => {
                 this.help();
             });

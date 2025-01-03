@@ -8,8 +8,8 @@ export class CategoryCommand extends AbstractCommand {
 
         this
             .alias('c')
-            .description('블로그 카테고리 관련 명령어들')
-            .summary('Category')
+            .description('카테고리 관련 명령어')
+            .summary('카테고리 관련 명령어')
             .action(() => {
                 this.help();
             });

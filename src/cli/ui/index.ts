@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 export { CategorySelector } from './CategorySelector';
 export * from './message';
+export { HELP_CONFIGURATION } from './helpConfiguration';
 
 const styles = {
     prefix: chalk.bold.green.bgGreenBright,

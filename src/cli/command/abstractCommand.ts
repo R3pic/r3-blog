@@ -1,5 +1,5 @@
-import chalk from 'chalk';
 import { Command } from 'commander';
+import { HELP_CONFIGURATION } from '../ui';
 
 export abstract class AbstractCommand extends Command {
     constructor(name: string) {
@@ -8,16 +8,6 @@ export abstract class AbstractCommand extends Command {
 
     register(program: Command) {
         program.addCommand(this);
-        this.configureHelp({
-            styleTitle: (str: string) => chalk.greenBright(str),
-            styleCommandText: (str: string) => chalk.greenBright(str),
-            styleCommandDescription: (str: string) => chalk.greenBright(str),
-            styleOptionText: (str: string) => chalk.greenBright(str),
-            styleOptionDescription: (str: string) => chalk.greenBright(str),
-            styleSubcommandText: (str: string) => chalk.greenBright(str),
-            styleSubcommandDescription: (str: string) => chalk.greenBright(str),
-            styleArgumentText: (str: string) => chalk.greenBright(str),
-            styleArgumentDescription: (str: string) => chalk.greenBright(str)            
-        });
+        this.configureHelp(HELP_CONFIGURATION);
     }
 }
