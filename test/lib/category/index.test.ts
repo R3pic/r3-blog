@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeAll } from 'bun:test';
 import {
-    getAllCategoryPath, getAllRootCategory, getCategory, getCategoryChain, toCategoryNode 
-} from '@/lib/category';
+    describe, it, expect, beforeAll, beforeEach 
+} from 'bun:test';
+import { CategoryService } from '@/lib/category';
 import BlogConfig from '@/config';
 import { getAllRootCategoryExpected, toCategoryNodeExpected } from './testData';
 import { CategoryNotFoundError } from '@/lib/category/error';
@@ -9,6 +9,11 @@ import { CategoryNotFoundError } from '@/lib/category/error';
 describe('Category', () => {
     beforeAll(() => {
         BlogConfig.postDir = 'fixtures/_posts';
+    });
+
+    let categoryService: CategoryService;
+    beforeEach(() => {
+        categoryService = new CategoryService();
     });
 
     describe('getAllCategoryPaths', () => {
@@ -21,7 +26,7 @@ describe('Category', () => {
                 'category2',
                 'category3'
             ];
-            const actual = getAllCategoryPath();
+            const actual = categoryService.getAllCategoryPath();
     
             expect(actual).toBeArray();
             expect(actual).toEqual(success);
@@ -31,7 +36,7 @@ describe('Category', () => {
     describe('getAllRootCategory', () => {
         it('올바른 동작을 수행한다.', () => {
             const expected = getAllRootCategoryExpected;
-            const actual = getAllRootCategory();
+            const actual = categoryService.getAllRootCategory();
 
             expect(actual).toBeArray();
             expect(actual).toEqual(expected);
@@ -56,14 +61,14 @@ describe('Category', () => {
                     slug: 'subcategory1'
                 }
             ];
-            const actual = getCategoryChain('category1/subcategory1');
+            const actual = categoryService.getCategoryChain('category1/subcategory1');
 
             expect(actual).toBeArray();
             expect(actual).toEqual(expected);
         });
 
         it('존재하지 않는 카테고리를 시도하면 예외를 발생시킨다.', () => {
-            expect(() => getCategoryChain('notfound')).toThrowError(CategoryNotFoundError);
+            expect(() => categoryService.getCategoryChain('notfound')).toThrowError(CategoryNotFoundError);
         });
     });
 
@@ -76,7 +81,7 @@ describe('Category', () => {
                 path: 'category1',
                 slug: 'category1'
             };
-            const actual = getCategory('category1');
+            const actual = categoryService.getCategory('category1');
 
             expect(actual).toBeDefined();
             expect(actual).toEqual(expected);
@@ -90,7 +95,7 @@ describe('Category', () => {
                 path: 'category1/subcategory1',
                 slug: 'subcategory1'
             };
-            const actual = getCategory('category1/subcategory1');
+            const actual = categoryService.getCategory('category1/subcategory1');
 
             expect(actual).toBeDefined();
             expect(actual).toEqual(expected);
@@ -104,7 +109,7 @@ describe('Category', () => {
                 path: 'category1/subcategory2',
                 slug: 'subcategory2'
             };
-            const actual = getCategory('category1/subcategory2');
+            const actual = categoryService.getCategory('category1/subcategory2');
 
             expect(actual).toBeDefined();
             expect(actual).toEqual(expected);
@@ -118,21 +123,21 @@ describe('Category', () => {
                 path: 'category1/subcategory1/subsubcategory1',
                 slug: 'subsubcategory1'
             };
-            const actual = getCategory('category1/subcategory1/subsubcategory1');
+            const actual = categoryService.getCategory('category1/subcategory1/subsubcategory1');
 
             expect(actual).toBeDefined();
             expect(actual).toEqual(expected);
         });
 
         it('존재하지 않는 카테고리를 접근할 때 예외를 발생시킨다.', () => {
-            expect(() => getCategory('notfound')).toThrowError(CategoryNotFoundError);
+            expect(() => categoryService.getCategory('notfound')).toThrowError(CategoryNotFoundError);
         });
     });
 
     describe('toCategoryNode', () => {
         it('올바른 노드를 반환한다.', () => {
             const expected: CategoryNode = toCategoryNodeExpected;
-            const actual = toCategoryNode(getCategory('category1')!);
+            const actual = categoryService.toCategoryNode(categoryService.getCategory('category1')!);
 
             expect(actual).toBeDefined();
             expect(actual).toEqual(expected);
