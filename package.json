@@ -7,22 +7,21 @@
   "version": "0.0.1",
   "main": "./src/index.ts",
   "module": "./src/index.ts",
-  "types": "./dist/index.d.ts",
-  "description": "R3 blog Lib",
+  "types": "./src/index.d.ts",
+  "description": "R3 blog Library include CLI Tools",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./src/index.ts",
-      "require": "./dist/index.cjs"
+      "types": "./src/index.d.ts",
+      "import": "./src/index.ts"
     }
   },
   "scripts": {
-    "lint": "eslint",
+    "lint": "bun eslint --ignore-pattern dist",
     "test": "test",
-    "build": "bun run build.ts"
+    "build": "bun run build.ts && cp dist/index.d.ts src/index.d.ts && bun lint --fix"
   },
   "files": [
-    "dist"
+    "src"
   ],
   "dependencies": {
     "chalk": "5.4.1",
@@ -47,5 +46,15 @@
   },
   "bin": {
     "blog": "./src/bin/blog.ts"
-  }
+  },
+  "repository": "R3pic/r3-blog",
+  "author": {
+    "name": "R3pic",
+    "url": "https://next-code-blog.vercel.app",
+    "email": "r3picmrkb@gmail.com"
+  },
+  "keywords": [
+    "blog",
+    "cli"
+  ]
 }
