@@ -6,23 +6,37 @@ import { parsePostFrontMatter } from './parsePostMatter';
 import { PostNotFoundError } from './error';
 import { TagService } from '@/lib/tag';
 import { CategoryService } from '../category';
-import { Post } from '@/types';
+import { DetailPost, Post } from '@/types';
 import { BlogService } from '../blogService';
 
 export class PostService extends BlogService {
     private allPost: Post[] = [];
     private cached = false;
 
-    getAllPost(): Post[] {
-        if (this.cached)
-            return this.allPost;
-
+    getAllPost(service: CategoryService): DetailPost[];
+    getAllPost(): Post[];
+    getAllPost(service?: CategoryService): Post[] | DetailPost[] {
         const cwd = path.resolve(this.postDir);
-        this.allPost = globSync('**/*.mdx', { onlyFiles: true, cwd })
-            .map((postPath) => parsePost(postPath, this.postDir))
-            .sort((a, b) => b.date.getTime() - a.date.getTime());
-        this.cached = true;
-        return this.allPost;
+        if (service) {
+            return globSync('**/*.mdx', { onlyFiles: true, cwd })
+                .map((postPath) => {
+                    const post = parsePost(postPath, this.postDir);
+                    return {
+                        ...post,
+                        category: service.getCategory(post.category)
+                    };
+                })
+                .sort((a, b) => b.date.getTime() - a.date.getTime());
+        } else {
+            if (this.cached)
+                return this.allPost;
+    
+            this.allPost = globSync('**/*.mdx', { onlyFiles: true, cwd })
+                .map((postPath) => parsePost(postPath, this.postDir))
+                .sort((a, b) => b.date.getTime() - a.date.getTime());
+            this.cached = true;
+            return this.allPost;
+        }
     }
 
     getAllPostFromCategory(categoryPath: string) {

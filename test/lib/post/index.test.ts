@@ -1,3 +1,4 @@
+import { CategoryService } from '@/index';
 import { PostService } from '@/lib/post';
 import { PostNotFoundError } from '@/lib/post/error';
 import { DetailPost, Post } from '@/types';
@@ -16,7 +17,7 @@ describe('Post', () => {
         beforeEach(() => {
             postService = new PostService(postDir);
         });
-        it('올바른 동작을 수행한다.', () => {
+        it('Post[]를 반환한다.', () => {
             const expected: Post[] = [
                 {
                     title: '테스트포스트3',
@@ -56,7 +57,65 @@ describe('Post', () => {
             expect(actual).toEqual(expected);
         });
 
-        it('캐시가 존재할 경우 반환한다.', () => {
+        it('의존성 주입시 DetailPost[]를 반환한다.', () => {
+            const expected: DetailPost[] = [
+                {
+                    title: '테스트포스트3',
+                    description: '테스트포스트설명3',
+                    date: new Date('2025-01-01'),
+                    tags: [ '태그3', '2024', '2024-12-30' ],
+                    thumbnail: '/thumbnail/nextjs.png',
+                    category: {
+                        display: 'category3',
+                        level: 1,
+                        order: 0,
+                        path: 'category3',
+                        slug: 'category3'
+                    },
+                    content: '테스트게시글 내용3',
+                    slug: 'test-post-3'
+                },
+                {
+                    title: '테스트포스트2',
+                    description: '테스트포스트설명2',
+                    date: new Date('2024-12-26'),
+                    tags: [ '태그2', '2024', '2024-12-30' ],
+                    thumbnail: '/thumbnail/nextjs.png',
+                    category: {
+                        display: 'subsubcategory1',
+                        level: 3,
+                        order: 0,
+                        path: 'category1/subcategory1/subsubcategory1',
+                        slug: 'subsubcategory1'
+                    },
+                    content: '테스트게시글 내용2',
+                    slug: 'test-post-2'
+                },
+                {
+                    title: '테스트포스트',
+                    description: '테스트포스트설명',
+                    date: new Date('2024-12-24'),
+                    tags: [ '태그1', '2024', '2024-12-30' ],
+                    thumbnail: '/thumbnail/nextjs.png',
+                    category: {
+                        display: 'subcategory2',
+                        level: 2,
+                        order: 0,
+                        path: 'category1/subcategory2',
+                        slug: 'subcategory2'
+                    },
+                    content: '테스트게시글 내용',
+                    slug: 'test-post'
+                }
+            ];
+
+            const actual = postService.getAllPost(new CategoryService(postDir));
+
+            expect(actual).toBeArray();
+            expect(actual).toEqual(expected);
+        });
+
+        it('캐시가 존재할 경우 캐시를 반환한다.', () => {
             const firstCallResult = postService.getAllPost();
             const secondCallResult = postService.getAllPost();
         
