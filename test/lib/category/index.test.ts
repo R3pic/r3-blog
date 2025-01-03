@@ -4,7 +4,8 @@ import {
 import { CategoryService } from '@/lib/category';
 import BlogConfig from '@/config';
 import { getAllRootCategoryExpected, toCategoryNodeExpected } from './testData';
-import { CategoryNotFoundError } from '@/lib/category/error';
+import { CategoryNotFoundError, PostCacheNotInitializedError } from '@/lib/category/error';
+import { PostService } from '@/index';
 
 describe('Category', () => {
     beforeAll(() => {
@@ -137,10 +138,40 @@ describe('Category', () => {
     describe('toCategoryNode', () => {
         it('올바른 노드를 반환한다.', () => {
             const expected: CategoryNode = toCategoryNodeExpected;
-            const actual = categoryService.toCategoryNode(categoryService.getCategory('category1')!);
+            const actual = categoryService.toCategoryNode(categoryService.getCategory('category1'));
 
             expect(actual).toBeDefined();
             expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('getAllPost', () => {
+        it('올바른 동작을 수행한다.', () => {
+            const expected: Post[] = [
+                {
+                    category: 'category3',
+                    content: '테스트게시글 내용3',
+                    date: new Date('2025-01-01'),
+                    description: '테스트포스트설명3',
+                    slug: 'test-post-3',
+                    tags: [
+                        '태그3',
+                        '2024',
+                        '2024-12-30'
+                    ],
+                    thumbnail: '/thumbnail/nextjs.png',
+                    title: '테스트포스트3'
+                }
+            ];
+            const postService = new PostService();
+            const categoryService = new CategoryService(postService.getAllPost());
+            const actual = categoryService.getAllPost('category3');
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('게시글 데이터를 주입하지 않고 사용시 예외가 발생한다.', () => {
+            expect(() => categoryService.getAllPost('category3')).toThrowError(PostCacheNotInitializedError);
         });
     });
 });

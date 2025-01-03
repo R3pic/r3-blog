@@ -38,7 +38,7 @@ describe('Tag', () => {
                     thumbnail: '/thumbnail/nextjs.png',
                     title: '테스트포스트2'
                 }];
-                const actual = tagService.getAllPostFromTag('태그2');
+                const actual = tagService.getAllPost('태그2');
 
                 expect(actual).toBeArray();
                 expect(actual).toEqual(expected);
@@ -46,7 +46,7 @@ describe('Tag', () => {
 
             it('태그에 해당하는 게시글이 없을 경우 빈 배열을 반환한다.', () => {
                 const expected: Post[] = [];
-                const actual = tagService.getAllPostFromTag('없는태그');
+                const actual = tagService.getAllPost('없는태그');
 
                 expect(actual).toBeArray();
                 expect(actual).toBeArrayOfSize(0);

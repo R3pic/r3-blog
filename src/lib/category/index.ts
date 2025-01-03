@@ -2,11 +2,32 @@ import fs from 'fs';
 import path from 'path';
 import { globSync } from 'fast-glob';
 import { parseCategoryMatter } from './parseCategoryMatter';
-import { CategoryNotFoundError } from './error';
+import { CategoryNotFoundError, PostCacheNotInitializedError } from './error';
+import { MapArrayCache } from '@/lib/common/cache';
 import BlogConfig from '@/config';
 
 export class CategoryService {
-    constructor() {}
+    private categoryPostCache = new MapArrayCache<string, Post[]>();
+    private cached = false;
+    constructor(posts?: Post[]) {
+        if (posts) {
+            this.initializeCache(posts);
+        }
+    }
+
+    private initializeCache(posts: Post[]) {
+        for (let i = 0, len = posts.length ; i < len ; i++) {
+            const post = posts[i];
+            const splited = post.category.split('/');
+
+            let basePath = '';
+            splited.forEach((slug) => {
+                basePath = basePath ? `${basePath}/${slug}` : slug;
+                this.categoryPostCache.add(basePath, post);
+            });
+        }
+        this.cached = true;
+    }
 
     getAllCategoryPath(): string[] {
         const cwd = path.resolve(BlogConfig.postDir);
@@ -16,7 +37,7 @@ export class CategoryService {
     getAllRootCategory(): CategoryNode[] {
         return this.getAllCategoryPath().reduce<CategoryNode[]>((acc, categoryPath) => {
             const category = this.getCategory(categoryPath);
-            if (category?.level === 1) {
+            if (category.level === 1) {
                 acc.push(this.toCategoryNode(category));
             }
             return acc;
@@ -71,5 +92,12 @@ export class CategoryService {
             ...category,
             subCategories
         };
+    }
+
+    getAllPost(categoryPath: string) {
+        if (!this.cached)
+            throw new PostCacheNotInitializedError();
+
+        return this.categoryPostCache.get(categoryPath) || [];
     }
 }

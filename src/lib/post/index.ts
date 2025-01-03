@@ -6,6 +6,7 @@ import { parsePostFrontMatter } from './parsePostMatter';
 import { PostNotFoundError } from './error';
 import { TagService } from '@/lib/tag';
 import BlogConfig from '@/config';
+import { CategoryService } from '../category';
 
 export class PostService {
     private allPost: Post[] = [];
@@ -22,9 +23,14 @@ export class PostService {
         return this.allPost;
     }
 
+    getAllPostFromCategory(categoryPath: string, postDir?: string) {
+        const categoryService = new CategoryService(this.getAllPost(postDir));
+        return categoryService.getAllPost(categoryPath);
+    }
+
     getAllPostFromTag(tag: string, postDir?: string) {
         const tagService = new TagService(this.getAllPost(postDir));
-        return tagService.getAllPostFromTag(tag);
+        return tagService.getAllPost(tag);
     }
 
     getPost(slug: string, postDir: string = BlogConfig.postDir): Post {

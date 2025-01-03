@@ -22,5 +22,5 @@
 ### 게시글
 * [x] 모든 게시글 목록 로드 (getAllPost)
 * [x] 특정 게시글 로드 (getPost)
-* [ ] 특정 태그를 가진 게시글 로드 (getAllPostFromTag)
-* [ ] 특정 카테고리를 가진 게시글 로드 (getAllPostFromCategory)
+* [x] 특정 태그를 가진 게시글 로드 (getAllPostFromTag)
+* [x] 특정 카테고리를 가진 게시글 로드 (getAllPostFromCategory)

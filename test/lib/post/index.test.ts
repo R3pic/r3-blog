@@ -63,6 +63,30 @@ describe('Post', () => {
         });
     });
 
+    describe('getAllPostFromCategory', () => {
+        it('올바른 동작을 수행한다.', () => {
+            const expected: Post[] = [
+                {
+                    category: 'category3',
+                    content: '테스트게시글 내용3',
+                    date: new Date('2025-01-01'),
+                    description: '테스트포스트설명3',
+                    slug: 'test-post-3',
+                    tags: [
+                        '태그3',
+                        '2024',
+                        '2024-12-30'
+                    ],
+                    thumbnail: '/thumbnail/nextjs.png',
+                    title: '테스트포스트3'
+                }
+            ];
+            const actual = postService.getAllPostFromCategory('category3');
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('getPost', () => {
         it('올바른 동작을 수행한다.', () => {
             const expected = {

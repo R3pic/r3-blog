@@ -18,7 +18,7 @@ export class TagService {
         return Array.from(this.tags).sort();
     }
 
-    getAllPostFromTag(tag: string): Post[] {
+    getAllPost(tag: string): Post[] {
         const posts = this.tagPostCache.get(tag);
         return posts || [];
     }
