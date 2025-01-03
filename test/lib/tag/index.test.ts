@@ -1,6 +1,7 @@
+import { CategoryService } from '@/index';
 import { PostService } from '@/lib/post';
 import { TagService } from '@/lib/tag';
-import { Post } from '@/types';
+import { DetailPost, Post } from '@/types';
 import { describe, it, expect, beforeAll } from 'bun:test';
 
 describe('Tag', () => {
@@ -14,7 +15,7 @@ describe('Tag', () => {
         });
 
         describe('getAllTag', () => {
-            it('올바른 동작을 수행한다.', () => {
+            it('게시글에 작성된 모든 태그를 출력한다.', () => {
                 const expected = ['2024', '2024-12-30', '태그1', '태그2', '태그3'];
                 const actual = tagService.getAllTag();
     
@@ -24,22 +25,49 @@ describe('Tag', () => {
         });
 
         describe('getAllPostFromTag', () => {
-            it('올바른 동작을 수행한다.', () => {
+            it('Post[]를 반환한다.', () => {
                 const expected: Post[] = [{
-                    category: 'category1/subcategory1/subsubcategory1',
+                    slug: 'test-post-2',
+                    title: '테스트포스트2',
+                    description: '테스트포스트설명2',
                     content: '테스트게시글 내용2',
                     date: new Date('2024-12-26'),
-                    description: '테스트포스트설명2',
-                    slug: 'test-post-2',
+                    category: 'category1/subcategory1/subsubcategory1',
                     tags: [
                         '태그2',
                         '2024',
                         '2024-12-30'
                     ],
-                    thumbnail: '/thumbnail/nextjs.png',
-                    title: '테스트포스트2'
+                    thumbnail: '/thumbnail/nextjs.png'
                 }];
                 const actual = tagService.getAllPost('태그2');
+
+                expect(actual).toBeArray();
+                expect(actual).toEqual(expected);
+            });
+
+            it('DetailPost[]를 반환한다.', () => {
+                const expected: DetailPost[] = [{
+                    slug: 'test-post-2',
+                    title: '테스트포스트2',
+                    description: '테스트포스트설명2',
+                    content: '테스트게시글 내용2',
+                    date: new Date('2024-12-26'),
+                    category: {
+                        display: 'subsubcategory1',
+                        level: 3,
+                        order: 0,
+                        path: 'category1/subcategory1/subsubcategory1',
+                        slug: 'subsubcategory1'
+                    },
+                    tags: [
+                        '태그2',
+                        '2024',
+                        '2024-12-30'
+                    ],
+                    thumbnail: '/thumbnail/nextjs.png'
+                }];
+                const actual = tagService.getAllPost('태그2', new CategoryService(postDir));
 
                 expect(actual).toBeArray();
                 expect(actual).toEqual(expected);

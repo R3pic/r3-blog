@@ -1,5 +1,6 @@
 import { MapArrayCache } from '@/lib/common/cache';
-import { Post } from '@/types';
+import { DetailPost, Post } from '@/types';
+import { CategoryService } from '../category';
 
 export class TagService {
     tags = new Set<string>();
@@ -19,8 +20,20 @@ export class TagService {
         return Array.from(this.tags).sort();
     }
 
-    getAllPost(tag: string): Post[] {
+    getAllPost(tag: string): Post[];
+    getAllPost(tag: string, service: CategoryService): DetailPost[]; 
+    getAllPost(tag: string, service?: CategoryService): Post[] | DetailPost[] {
         const posts = this.tagPostCache.get(tag);
+
+        if (posts && service) {
+            return posts.map((post) => {
+                return {
+                    ...post,
+                    category: service.getCategory(post.category)
+                };
+            });
+        }
+
         return posts || [];
     }
 }
