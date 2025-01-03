@@ -31,8 +31,7 @@ async function bootstrap() {
             program.help();
         })
         .hook('preSubcommand', () => {
-            const postDir = getPostDir();
-            if (!isExist(postDir)) {
+            if (!isExist(getPostDir())) {
                 show.errMsg(POSTDIR_NOT_FOUND);
                 process.exit(1);
             }

@@ -12,7 +12,7 @@
 # TODO
 ## CLI
 * [x] 카테고리 생성 `blog category new <카테고리이름>`
-* [ ] 포스트 생성 `blog post new <게시글이름>`
+* [x] 포스트 생성 `blog post new <게시글이름>`
 
 ## 데이터 로드
 ### 카테고리
