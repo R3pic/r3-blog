@@ -7,6 +7,5 @@ export type {
     CategoryFrontMatter,
     CategoryNode,
     Post,
-    PostFrontMatter,
-    DetailPost
+    PostFrontMatter
 } from '@/types';

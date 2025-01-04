@@ -3,9 +3,8 @@ import {
 } from 'bun:test';
 import { CategoryService } from '@/lib/category';
 import { getAllRootCategoryExpected, toCategoryNodeExpected } from './testData';
-import { CategoryNotFoundError, PostCacheNotInitializedError } from '@/lib/category/error';
-import { PostService } from '@/lib/post';
-import { Category, CategoryNode, DetailPost } from '@/types';
+import { CategoryNotFoundError } from '@/lib/category/error';
+import { Category, CategoryNode, Post  } from '@/types';
 
 describe('Category', () => {
     let postDir: string;
@@ -148,18 +147,18 @@ describe('Category', () => {
 
     describe('getAllPost', () => {
         it('올바른 동작을 수행한다.', () => {
-            const expected: DetailPost[] = [
+            const expected: Post[] = [
                 {
                     slug: 'test-post-3',
                     title: '테스트포스트3',
                     description: '테스트포스트설명3',
                     content: '테스트게시글 내용3',
                     category: {
-                        display: 'category3',
                         level: 1,
-                        order: 0,
+                        slug: 'category3',
+                        display: 'category3',
                         path: 'category3',
-                        slug: 'category3'
+                        order: 0
                     },
                     date: new Date('2025-01-01'),
                     thumbnail: '/thumbnail/nextjs.png',
@@ -170,14 +169,9 @@ describe('Category', () => {
                     ]
                 }
             ];
-            const postService = new PostService(postDir);
-            const actual = categoryService.injection(postService).getAllPost('category3');
+            const actual = categoryService.getAllPost('category3');
 
             expect(actual).toEqual(expected);
-        });
-
-        it('게시글 데이터를 주입하지 않고 사용시 예외가 발생한다.', () => {
-            expect(() => categoryService.getAllPost('category3')).toThrowError(PostCacheNotInitializedError);
         });
     });
 });

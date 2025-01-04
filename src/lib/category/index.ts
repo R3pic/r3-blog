@@ -2,15 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import { globSync } from 'fast-glob';
 import { parseCategoryMatter } from './parseCategoryMatter';
-import { CategoryNotFoundError, PostCacheNotInitializedError } from './error';
+import { CategoryNotFoundError } from './error';
 import { MapArrayCache } from '@/lib/common/cache';
-import { Category, CategoryNode, DetailPost, Post } from '@/types';
+import { Category, CategoryNode, Post } from '@/types';
 import { PostService } from '../post';
 import { BlogService } from '../blogService';
 
 export class CategoryService extends BlogService {
     private categoryPostCache = new MapArrayCache<string, Post[]>();
-    private cached = false;
 
     getAllCategoryPath(): string[] {
         const cwd = path.resolve(this.postDir);
@@ -18,13 +17,15 @@ export class CategoryService extends BlogService {
     }
 
     getAllRootCategory(): CategoryNode[] {
-        return this.getAllCategoryPath().reduce<CategoryNode[]>((acc, categoryPath) => {
-            const category = this.getCategory(categoryPath);
-            if (category.level === 1) {
-                acc.push(this.toCategoryNode(category));
-            }
-            return acc;
-        }, []);
+        return this.getAllCategoryPath()
+            .reduce<CategoryNode[]>((acc, categoryPath) => {
+                const category = this.getCategory(categoryPath);
+                if (category.level === 1) {
+                    acc.push(this.toCategoryNode(category));
+                }
+                return acc;
+            }, [])
+            .sort((a, b) => a.order - b.order || a.display.localeCompare(b.display));
     }
 
     getCategoryChain(categoryPath: string): Category[] {
@@ -77,11 +78,12 @@ export class CategoryService extends BlogService {
         };
     }
 
-    injection(service: PostService) {
-        const posts = service.getAllPost();
+    getAllPost(categoryPath: string): Post[] {
+        const posts = new PostService(this.postDir).getAllPost();
+
         for (let i = 0, len = posts.length ; i < len ; i++) {
             const post = posts[i];
-            const splited = post.category.split('/');
+            const splited = post.category.path.split('/');
 
             let basePath = '';
             splited.forEach((slug) => {
@@ -89,21 +91,7 @@ export class CategoryService extends BlogService {
                 this.categoryPostCache.add(basePath, post);
             });
         }
-        this.cached = true;
 
-        return this;
-    }
-
-    getAllPost(categoryPath: string): DetailPost[] {
-        if (!this.cached)
-            throw new PostCacheNotInitializedError();
-
-        return this.categoryPostCache.get(categoryPath)?.map((post) => {
-            const category = this.getCategory(categoryPath);
-            return {
-                ...post,
-                category
-            };
-        }) || [];
+        return this.categoryPostCache.get(categoryPath) || [];
     }
 }

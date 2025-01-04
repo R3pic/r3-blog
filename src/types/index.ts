@@ -5,8 +5,8 @@ export type TemplateContext<T> = {
 export type Category = {
     level: number;
     slug: string;
-    path: string;
     display: string;
+    path: string;
     order: number;
 };
 
@@ -25,13 +25,9 @@ export type Post = {
     description: string;
     content: string;
     date: Date;
-    category: string;
+    category: Category;
     thumbnail: string | undefined;
     tags: string[];
-};
-
-export type DetailPost = Omit<Post, 'category'> & {
-    category: Category;
 };
 
 export type PostFrontMatter = {
